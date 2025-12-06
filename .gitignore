@@ -1,0 +1,38 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.* 
+!.env.example
+
+# Build output
+dist/
+build/
+.vite/
+
+# Logs
+logs/
+*.log
+logs/*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Local backups
+*.zip
+*.tar.gz
+
+# Package locks (optional - only ignore if you want)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
