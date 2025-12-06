@@ -1,5 +1,7 @@
+import dotenv from "dotenv";
+dotenv.config();
 import axios from "axios";
-import Product from "../model/Product.js";
+import Product from "../model/index.js";
 import connectDB from "../db/db.js";
 
 const seedProducts = async () => {
