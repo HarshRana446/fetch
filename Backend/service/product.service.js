@@ -1,4 +1,4 @@
-import Product from "../model/index.js";
+import Product from "../model/product.model.js";
 
 export const createProductService = async (data) => {
   try {
@@ -36,13 +36,16 @@ export const deleteProductService = async ({ _id }) => {
   }
 };
 
-export const getAllProductsService = async ({ q, limit, skip }) => {
+export const getAllProductsService = async ({ q, limit = 10, skip = 0 }) => {
   try {
     const filter = q ? { title: new RegExp(q, "i") } : {};
+
     const products = await Product.find(filter)
       .skip(Number(skip))
       .limit(Number(limit));
+
     const total = await Product.countDocuments(filter);
+
     return { products, total };
   } catch (error) {
     throw new Error(error.message);

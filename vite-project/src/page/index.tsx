@@ -44,12 +44,10 @@ const Home = () => {
       setLoading(true);
       const skip = (page - 1) * pageSize;
 
-      const res = await axios.get("http://localhost:5000/v1/product", {
-        params: {
-          q: query,
-          skip,
-          limit: pageSize,
-        },
+      const res = await axios.get("http://localhost:6000/v1/product", {
+        params: query
+          ? { q: query, skip, limit: pageSize }
+          : { skip, limit: pageSize },
       });
 
       setProducts(res.data.products);
@@ -80,13 +78,13 @@ const Home = () => {
   const handleSave = async () => {
     try {
       if (editingProduct) {
-        await axios.put("http://localhost:5000/v1/product", {
+        await axios.put("http://localhost:6000/v1/product", {
           ...formData,
           _id: editingProduct._id,
         });
         toast.success("Updated!");
       } else {
-        await axios.post("http://localhost:5000/v1/product", formData);
+        await axios.post("http://localhost:6000/v1/product", formData);
         toast.success("Created!");
       }
 
@@ -99,7 +97,7 @@ const Home = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete("http://localhost:5000/v1/product", {
+      await axios.delete("http://localhost:6000/v1/product", {
         data: { _id: id },
       });
       toast.success("Deleted successfully!");
