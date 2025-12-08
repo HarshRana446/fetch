@@ -2,10 +2,15 @@ import Product from "../model/product.model.js";
 
 export const createProductService = async (data) => {
   try {
-    const product = await Product.create(data);
-    return product;
+    const lastProduct = await Product.findOne().sort({ dummyId: -1 });
+    const nextId = lastProduct?.dummyId ? lastProduct.dummyId + 1 : 1;
+    const product = await Product.create({
+      ...data,
+      dummyId: nextId,
+    });
+    return { status: 201, product };
   } catch (error) {
-    throw new Error(error.message);
+    return { status: 500, error: error.message };
   }
 };
 
@@ -27,9 +32,9 @@ export const updateProductService = async (body) => {
 export const deleteProductService = async ({ _id }) => {
   try {
     if (!_id) {
-      throw new Error("Product ID is Not Found");
+      throw new Error("Product ID is Missing");
     }
-    const deleteProduct = await Product.findOneAndDelete({ _id });
+    const deleteProduct = await Product.findByIdAndDelete({ _id });
     return deleteProduct;
   } catch (error) {
     throw new Error(error.message);
@@ -45,8 +50,7 @@ export const getAllProductsService = async ({ q, limit = 10, skip = 0 }) => {
       .limit(Number(limit));
 
     const total = await Product.countDocuments(filter);
-
-    return { products, total };
+    return {status: 200, products, total, q, limit, skip };
   } catch (error) {
     throw new Error(error.message);
   }

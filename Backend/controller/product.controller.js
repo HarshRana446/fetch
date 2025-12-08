@@ -42,15 +42,18 @@ export const deleteProduct = async (req, res) => {
 export const getAllProducts = async (req, res) => {
   try {
     const { q, limit, skip } = req.query;
-    const { products, total } = await ProductService.getAllProductsService({
+    const result = await ProductService.getAllProductsService({
       q,
       limit,
       skip,
     });
-    res.status(200).json({
+    return res.status(result.status).json({
       message: "Products fetched successfully",
-      products,
-      total,
+      products: result.products,
+      total: result.total,
+      q: result.q,
+      limit: result.limit,
+      skip: result.skip,
     });
   } catch (error) {
     res.status(500).json({

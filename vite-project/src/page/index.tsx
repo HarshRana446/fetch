@@ -54,7 +54,7 @@ const Home = () => {
 
       setTableState((prev) => ({
         ...prev,
-        totalPages: parseInt(String(res.data.total / prev.pageSize)),
+        totalPages: Math.max(1, Math.ceil(res.data.total / prev.pageSize)),
       }));
 
       setLoading(false);
@@ -87,7 +87,6 @@ const Home = () => {
         await axios.post("http://localhost:5000/v1/product", formData);
         toast.success("Created!");
       }
-
       setShowModal(false);
       fetchProducts();
     } catch {
@@ -158,9 +157,12 @@ const Home = () => {
           </thead>
 
           <tbody>
-            {products.map((p) => (
+            {products.map((p, index) => (
               <tr key={p._id} className="text-center">
-                <td className="border p-2">{p.dummyId}</td>
+                <td className="border p-2">
+                  {pageSize * (page - 1) + index + 1}
+                </td>
+
                 <td className="border p-2">
                   <img src={p.thumbnail} className="w-16 h-16 mx-auto" />
                 </td>
@@ -182,7 +184,6 @@ const Home = () => {
                   >
                     Edit
                   </button>
-
                   <button
                     onClick={() => handleDelete(p._id)}
                     className="bg-red-500 text-white px-3 py-1 rounded"
