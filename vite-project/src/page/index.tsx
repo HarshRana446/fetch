@@ -44,7 +44,7 @@ const Home = () => {
       setLoading(true);
       const skip = (page - 1) * pageSize;
 
-      const res = await axios.get("http://localhost:6000/v1/product", {
+      const res = await axios.get("http://localhost:5000/v1/product", {
         params: query
           ? { q: query, skip, limit: pageSize }
           : { skip, limit: pageSize },
@@ -78,13 +78,13 @@ const Home = () => {
   const handleSave = async () => {
     try {
       if (editingProduct) {
-        await axios.put("http://localhost:6000/v1/product", {
+        await axios.put("http://localhost:5000/v1/product", {
           ...formData,
           _id: editingProduct._id,
         });
         toast.success("Updated!");
       } else {
-        await axios.post("http://localhost:6000/v1/product", formData);
+        await axios.post("http://localhost:5000/v1/product", formData);
         toast.success("Created!");
       }
 
@@ -97,7 +97,7 @@ const Home = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete("http://localhost:6000/v1/product", {
+      await axios.delete("http://localhost:5000/v1/product", {
         data: { _id: id },
       });
       toast.success("Deleted successfully!");
@@ -105,6 +105,17 @@ const Home = () => {
     } catch {
       toast.error("Delete failed");
     }
+  };
+
+  const handleClose = async () => {
+    setShowModal(false);
+    setEditingProduct(null);
+    setFormData({
+      title: "",
+      description: "",
+      price: 0,
+      thumbnail: "",
+    });
   };
 
   return (
@@ -115,7 +126,6 @@ const Home = () => {
           placeholder="Search by title"
           className="border p-2 rounded w-64"
         />
-
         <button
           onClick={() => {
             setEditingProduct(null);
@@ -160,7 +170,12 @@ const Home = () => {
                   <button
                     onClick={() => {
                       setEditingProduct(p);
-                      setFormData(p);
+                      setFormData({
+                        title: p.title,
+                        description: p.description,
+                        price: p.price,
+                        thumbnail: p.thumbnail,
+                      });
                       setShowModal(true);
                     }}
                     className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
@@ -181,7 +196,6 @@ const Home = () => {
         </table>
       )}
 
-      {/* Pagination */}
       <div className="flex justify-center gap-2 mt-4">
         <button
           disabled={page === 1}
@@ -208,10 +222,15 @@ const Home = () => {
         </button>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded w-96">
+          <div className="bg-white p-6 rounded w-96 relative">
+            <button
+              onClick={handleClose}
+              className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
+            >
+              ×
+            </button>
             <h2 className="text-xl mb-4">
               {editingProduct ? "Edit" : "Add"} Product
             </h2>
@@ -246,7 +265,7 @@ const Home = () => {
 
             <input
               className="border p-2 w-full mb-2"
-              placeholder="Thumbnail URL"
+              placeholder="URL"
               value={formData.thumbnail}
               onChange={(e) =>
                 setFormData((f) => ({ ...f, thumbnail: e.target.value }))
