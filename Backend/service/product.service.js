@@ -2,12 +2,7 @@ import Product from "../model/product.model.js";
 
 export const createProductService = async (data) => {
   try {
-    const lastProduct = await Product.findOne().sort({ dummyId: -1 });
-    const nextId = lastProduct?.dummyId ? lastProduct.dummyId + 1 : 1;
-    const product = await Product.create({
-      ...data,
-      dummyId: nextId,
-    });
+    const product = await Product.create(data);
     return { status: 201, product };
   } catch (error) {
     return { status: 500, error: error.message };
@@ -50,7 +45,7 @@ export const getAllProductsService = async ({ q, limit = 10, skip = 0 }) => {
       .limit(Number(limit));
 
     const total = await Product.countDocuments(filter);
-    return {status: 200, products, total, q, limit, skip };
+    return { status: 200, products, total, q, limit, skip };
   } catch (error) {
     throw new Error(error.message);
   }

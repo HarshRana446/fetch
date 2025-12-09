@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 
 interface Product {
   _id: string;
-  dummyId: number;
   title: string;
   description: string;
   price: number;
