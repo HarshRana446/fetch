@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import debounce from "lodash/debounce";
 import toast from "react-hot-toast";
+import { useProductContext } from "../context/productContext";
 
 interface Product {
   _id: string;
@@ -12,7 +13,7 @@ interface Product {
 }
 
 const Home = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products, setProducts } = useProductContext();
   const [loading, setLoading] = useState(false);
 
   const [tableState, setTableState] = useState({
@@ -175,7 +176,11 @@ const Home = () => {
       </div>
 
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-center p-4">Loading...</p>
+      ) : products.length === 0 ? (
+        <p className="text-center p-4">
+          No products found
+        </p>
       ) : (
         <table className="w-full border">
           <thead>
@@ -194,7 +199,6 @@ const Home = () => {
                 <td className="border p-2">
                   {pageSize * (page - 1) + index + 1}
                 </td>
-
                 <td className="border p-2">
                   <img src={p.thumbnail} className="w-16 h-16 mx-auto" />
                 </td>
