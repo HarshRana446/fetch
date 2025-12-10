@@ -13,7 +13,6 @@ const seedProducts = async () => {
     );
 
     const items = data.products.map((p) => ({
-      dummyId: p.id,
       title: p.title,
       description: p.description,
       price: p.price,

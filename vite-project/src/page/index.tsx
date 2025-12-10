@@ -35,6 +35,32 @@ const Home = () => {
   });
 
   useEffect(() => {
+    const ws = new WebSocket("ws://localhost:5000");
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.event === "productCreated") {
+        setProducts((prev) => [...prev, msg.data]);
+      }
+      if (msg.event === "productUpdated") {
+        setProducts((prev) =>
+          prev.map((p) => (p._id === msg.data._id ? msg.data : p))
+        );
+      }
+      if (msg.event === "productDeleted") {
+        setProducts((prev) => prev.filter((p) => p._id !== msg.data._id));
+      }
+      if (msg.event === "productsFetched") {
+        setProducts(msg.data.products);
+        setTableState((prev) => ({
+          ...prev,
+          totalPages: Math.max(1, Math.ceil(msg.data.total / prev.pageSize)),
+        }));
+      }
+    };
+    return () => ws.close();
+  }, []);
+
+  useEffect(() => {
     fetchProducts();
   }, [query, page]);
 
@@ -99,6 +125,13 @@ const Home = () => {
         data: { _id: id },
       });
       toast.success("Deleted successfully!");
+      if (products.length === 1 && page > 1) {
+        setTableState((prev) => ({
+          ...prev,
+          page: prev.page - 1,
+        }));
+        return;
+      }
       fetchProducts();
     } catch {
       toast.error("Delete failed");
